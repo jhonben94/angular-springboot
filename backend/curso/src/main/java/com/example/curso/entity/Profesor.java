@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.example.curso.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +17,11 @@ import javax.persistence.TemporalType;
 @Table(name="profesores")
 public class Profesor implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -101,6 +106,4 @@ public class Profesor implements Serializable {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-
-	private static final long servialVersionUID =1L;
 }

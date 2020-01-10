@@ -1,11 +1,11 @@
-package com.example.dao;
+package com.example.curso.dao;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.example.entity.Profesor;
+import com.example.curso.entity.Profesor;
 
 public interface IProfesorDAO extends CrudRepository< Profesor, Long>{
 	public Profesor findByEmail (String email);

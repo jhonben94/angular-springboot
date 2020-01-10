@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.curso.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.dao.IProfesorDAO;
-import com.example.entity.Profesor;
+import com.example.curso.dao.IProfesorDAO;
+import com.example.curso.entity.Profesor;
 
 @Service
 public class ProfesorService implements IProfesorService{
@@ -41,7 +41,7 @@ public class ProfesorService implements IProfesorService{
 	}
 
 	@Override
-	@Transactional( readOnly= true)
+	
 	public Optional<Profesor> findProfesorById(Long id) {
 		return  profesorDao.findById(id);
 	}
@@ -59,13 +59,22 @@ public class ProfesorService implements IProfesorService{
 	}
 
 	@Override
+	@Transactional( readOnly= true)
 	public Profesor findByIdSQL(Long id) {
 		return profesorDao.findByIdSQL(id);
 	}
 
 	@Override
+	@Transactional( readOnly= true)
 	public Profesor findProfesorByEmail(Profesor profesor) {
 		return (Profesor) profesorDao.findByEmail( profesor.getEmail());
+	}
+
+	@Override
+	@Transactional
+	public void save(Profesor profesor) {
+		profesorDao.save(profesor);
+		
 	}
 
 }

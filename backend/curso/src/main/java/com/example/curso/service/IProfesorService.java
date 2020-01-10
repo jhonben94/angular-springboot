@@ -1,9 +1,9 @@
-package com.example.service;
+package com.example.curso.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.entity.Profesor;
+import com.example.curso.entity.Profesor;
 
 public interface IProfesorService {
 	public List<Profesor> findAll();
@@ -16,4 +16,6 @@ public interface IProfesorService {
 	public void deleteProfesor(Long id);
 	public Profesor findById(Long id);
 	public Profesor findByIdSQL(Long id);
+	
+	public void save(Profesor profesor);
 }
