@@ -1,13 +1,18 @@
 package com.example.curso.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,9 +22,6 @@ import javax.persistence.TemporalType;
 @Table(name="profesores")
 public class Profesor implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -40,6 +42,10 @@ public class Profesor implements Serializable {
 	@Column(name="fecha_creacion")
 	@Temporal(TemporalType.DATE)
 	private Date fechaCreacion;	
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="profesor_id", referencedColumnName = "id")
+	private List<Curso> cursos = new ArrayList<>();
 	
 	
 	@PrePersist
@@ -104,6 +110,14 @@ public class Profesor implements Serializable {
 
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
+	}
+
+	public List<Curso> getCursos() {
+		return cursos;
+	}
+
+	public void setCursos(List<Curso> cursos) {
+		this.cursos = cursos;
 	}
 
 }

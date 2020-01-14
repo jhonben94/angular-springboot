@@ -11,11 +11,12 @@ public interface IProfesorService {
 	public Profesor checkProfesorLogin (Profesor profesor);
 	public void deleteProfesor(Profesor profesor);
 	public Profesor updateProfesor(Profesor profesor);
-	public Optional<Profesor> findProfesorById(Long id);	
+	public Optional<Profesor> findProfesorById(Profesor profesor);	
 	
 	public void deleteProfesor(Long id);
 	public Profesor findById(Long id);
 	public Profesor findByIdSQL(Long id);
 	
 	public void save(Profesor profesor);
+	public void deleteAllProfesor();
 }

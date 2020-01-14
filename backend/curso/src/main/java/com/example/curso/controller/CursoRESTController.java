@@ -15,30 +15,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.curso.entity.Curso;
 import com.example.curso.entity.Profesor;
 import com.example.curso.mapper.Mapper;
 import com.example.curso.model.MProfesor;
+import com.example.curso.service.CursoServiceImpl;
 import com.example.curso.service.ProfesorServiceImpl;
 
 @RestController
-@RequestMapping("/profesor")
-public class ProfesorRESTController {
+@RequestMapping("/curso")
+public class CursoRESTController {
+	
 	@Autowired
 	private ProfesorServiceImpl profesorService;
+
+	@Autowired
+	private CursoServiceImpl cursoService;
 	
 	@GetMapping("/listar")
 	@ResponseStatus(HttpStatus.OK)
-	public List<MProfesor> getProfesores(){
-		List<Profesor> profesores  =profesorService.findAll();
-		List<MProfesor> profesoresMapping = Mapper.convertirLista(profesores);
-		return profesoresMapping;
+	public List<Curso> getCursos(){
+		List<Curso> cursos  = cursoService.findAll();
+		return cursos;
 	}
 	
 	@PostMapping("/agregar")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity <Void> agregarProfesor(@RequestBody Profesor profesor){
-		if(profesorService.findProfesorByEmail(profesor) == null) {
-			profesorService.save(profesor);
+	public ResponseEntity <Void> agregarProfesor(@RequestBody Curso curso){
+		if(cursoService.findByNombreCurso(curso.getNombreCurso())== null) {
+			if(profesorService.findById(curso.getProfesorId()) == null) {
+				return new ResponseEntity <Void>(HttpStatus.CONFLICT);
+			}
+			cursoService.guardarCurso(curso);
 			return new ResponseEntity <Void>(HttpStatus.CREATED);
 		}else {
 			return new ResponseEntity <Void>(HttpStatus.CONFLICT);	
@@ -49,17 +57,14 @@ public class ProfesorRESTController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity <?> modificarProfesor(
 			@PathVariable(value="id") Long id, 
-			@RequestBody Profesor profesor){
+			@RequestBody Curso curso){
 		
-		Profesor profModificado = null;
-		profModificado = profesorService.findById(id);
-		
-		if(profModificado !=null) {
-			profModificado.setEmail(profesor.getEmail());
-			profModificado.setNombre(profesor.getNombre());
-			profesorService.updateProfesor(profModificado);
-			MProfesor prof = Mapper.convertirProfesor(profModificado);
-			return new ResponseEntity <MProfesor>(prof,HttpStatus.CREATED);
+		Curso cModificado = null;
+		cModificado = cursoService.findByCursoId(id);
+		if(cModificado !=null) {
+			cModificado.setNombreCurso( curso.getNombreCurso());;
+			cursoService.modificarCurso(cModificado);
+			return new ResponseEntity <Curso>(cModificado,HttpStatus.CREATED);
 		}else {
 			return new ResponseEntity <Void>(HttpStatus.NOT_FOUND);	
 		}	
@@ -70,50 +75,39 @@ public class ProfesorRESTController {
 	public ResponseEntity <Void> eliminarProfesor(
 			@PathVariable(value="id") Long id){
 			try {
-				profesorService.deleteProfesor(id);
+				Curso c = new Curso();
+				c.setCursoId(id);
+				cursoService.eliminarCurso(c);
 				return new ResponseEntity <Void>(HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity <Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 	} 
 	
-
-	@DeleteMapping("/eliminar")
+	@PostMapping("/buscar")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity <Void> eliminarProfesorES(){
-			try {
-				profesorService.deleteAllProfesor();
-				return new ResponseEntity <Void>(HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity <Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+	public ResponseEntity <?> buscarCurso( 
+			@RequestBody Curso curso){
+		Curso cursoEncontrado= null;
+		cursoEncontrado = cursoService.findByCursoId(curso.getCursoId());
+		if(cursoEncontrado !=null) {
+			return new ResponseEntity <Curso>(cursoEncontrado,HttpStatus.CREATED);
+		}else {
+			return new ResponseEntity <Void>(HttpStatus.NOT_FOUND);	
+		}
 	} 
 	
-	@PostMapping("/encontrar")
+	@PostMapping("/buscar/profesor")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity <?> buscarProfesor( 
+	public ResponseEntity <?> buscarCursoProfesor( 
 			@RequestBody Profesor profesor){
-		Profesor profEncontrado= null;
-		profEncontrado = profesorService.findProfesorByEmail(profesor);
-		if(profEncontrado !=null) {
-			MProfesor prof = Mapper.convertirProfesor(profEncontrado);
-			return new ResponseEntity <MProfesor>(prof,HttpStatus.CREATED);
+		List<Curso> cursosEncontrados= null;
+		cursosEncontrados = cursoService.buscarPorProfesor(profesor.getId());
+		if(cursosEncontrados !=null) {
+			return new ResponseEntity <List<Curso>>(cursosEncontrados,HttpStatus.CREATED);
 		}else {
 			return new ResponseEntity <Void>(HttpStatus.NOT_FOUND);	
 		}
 	} 
-	
-	@PostMapping("/login")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity <?> login( 
-			@RequestBody Profesor profesor ){
-		Profesor profEncontrado= null;
-		profEncontrado = profesorService.checkProfesorLogin(profesor);
-		if(profEncontrado !=null) {
-			MProfesor prof = Mapper.convertirProfesor(profEncontrado);
-			return new ResponseEntity <MProfesor>(prof,HttpStatus.OK);
-		}else {
-			return new ResponseEntity <Void>(HttpStatus.NOT_FOUND);	
-		}
-	}
+
 }

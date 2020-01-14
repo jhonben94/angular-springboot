@@ -12,7 +12,7 @@ import com.example.curso.dao.IProfesorDAO;
 import com.example.curso.entity.Profesor;
 
 @Service
-public class ProfesorService implements IProfesorService{
+public class ProfesorServiceImpl implements IProfesorService{
 	
 	@Autowired
 	private IProfesorDAO profesorDao;
@@ -41,14 +41,20 @@ public class ProfesorService implements IProfesorService{
 	}
 
 	@Override
-	
-	public Optional<Profesor> findProfesorById(Long id) {
-		return  profesorDao.findById(id);
+	public Optional<Profesor> findProfesorById(Profesor profesor) {
+		return  profesorDao.findById(profesor.getId());
 	}
 
 	@Override
+	@Transactional
 	public void deleteProfesor(Long id) {
 		profesorDao.deleteById(id);;
+		
+	}
+	@Override
+	@Transactional
+	public void deleteAllProfesor() {
+		profesorDao.deleteAll();
 		
 	}
 
